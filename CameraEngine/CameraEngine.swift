@@ -14,13 +14,13 @@ public enum CameraEngineSessionPreset {
     case high
     case medium
     case low
-    case res352x288
-    case res640x480
-    case res1280x720
-    case res1920x1080
-    case res3840x2160
-    case frame960x540
-    case frame1280x720
+    case cif352x288
+    case vga640x480
+    case hd1280x720
+    case hd1920x1080
+    case hd4k3840x2160
+    case iFrame960x540
+    case iFrame1280x720
     case inputPriority
     
     public func foundationPreset() -> AVCaptureSession.Preset {
@@ -29,19 +29,19 @@ public enum CameraEngineSessionPreset {
         case .high: return AVCaptureSession.Preset.high
         case .medium: return AVCaptureSession.Preset.medium
         case .low: return AVCaptureSession.Preset.low
-        case .res352x288: return AVCaptureSession.Preset.cif352x288
-        case .res640x480: return AVCaptureSession.Preset.vga640x480
-        case .res1280x720: return AVCaptureSession.Preset.hd1280x720
-        case .res1920x1080: return AVCaptureSession.Preset.hd1920x1080
-        case .res3840x2160:
+        case .cif352x288: return AVCaptureSession.Preset.cif352x288
+        case .vga640x480: return AVCaptureSession.Preset.vga640x480
+        case .hd1280x720: return AVCaptureSession.Preset.hd1280x720
+        case .hd1920x1080: return AVCaptureSession.Preset.hd1920x1080
+        case .hd4k3840x2160:
             if #available(iOS 9.0, *) {
                 return AVCaptureSession.Preset.hd4K3840x2160
             }
             else {
                 return AVCaptureSession.Preset.photo
             }
-        case .frame960x540: return AVCaptureSession.Preset.iFrame960x540
-        case .frame1280x720: return AVCaptureSession.Preset.iFrame1280x720
+        case .iFrame960x540: return AVCaptureSession.Preset.iFrame960x540
+        case .iFrame1280x720: return AVCaptureSession.Preset.iFrame1280x720
         default: return AVCaptureSession.Preset.photo
         }
     }
@@ -52,13 +52,13 @@ public enum CameraEngineSessionPreset {
             .high,
             .medium,
             .low,
-            .res352x288,
-            .res640x480,
-            .res1280x720,
-            .res1920x1080,
-            .res3840x2160,
-            .frame960x540,
-            .frame1280x720,
+            .cif352x288,
+            .vga640x480,
+            .hd1280x720,
+            .hd1920x1080,
+            .hd4k3840x2160,
+            .iFrame960x540,
+            .iFrame1280x720,
             .inputPriority
         ]
     }
@@ -123,8 +123,8 @@ public class CameraEngine: NSObject {
         }
     }
     
-    private var _cameraFocus: CameraEngineCameraFocus = .continuousAutoFocus
-    public var cameraFocus: CameraEngineCameraFocus! {
+    private var _cameraFocus: CameraEngine.Focus = .continuousAutoFocus
+    public var cameraFocus: CameraEngine.Focus! {
         get {
             return self._cameraFocus
         }
@@ -316,9 +316,9 @@ public class CameraEngine: NSObject {
         self.configureInputDevice()
     }
     
-    public func compatibleCameraFocus() -> [CameraEngineCameraFocus] {
+    public func compatibleCameraFocus() -> [CameraEngine.Focus] {
         if let currentDevice = self.cameraDevice.currentDevice {
-            return CameraEngineCameraFocus.availableFocus().filter {
+            return CameraEngine.Focus.availableFocus().filter {
                 return currentDevice.isFocusModeSupported($0.foundationFocus())
             }
         }

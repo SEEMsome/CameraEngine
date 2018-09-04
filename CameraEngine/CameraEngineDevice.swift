@@ -9,36 +9,6 @@
 import UIKit
 import AVFoundation
 
-public enum CameraEngineCameraFocus {
-    case locked
-    case autoFocus
-    case continuousAutoFocus
-    
-    func foundationFocus() -> AVCaptureDevice.FocusMode {
-        switch self {
-        case .locked: return AVCaptureDevice.FocusMode.locked
-        case .autoFocus: return AVCaptureDevice.FocusMode.autoFocus
-        case .continuousAutoFocus: return AVCaptureDevice.FocusMode.continuousAutoFocus
-        }
-    }
-    
-    public func description() -> String {
-        switch self {
-        case .locked: return "Locked"
-        case .autoFocus: return "AutoFocus"
-        case .continuousAutoFocus: return "ContinuousAutoFocus"
-        }
-    }
-    
-    public static func availableFocus() -> [CameraEngineCameraFocus] {
-        return [
-            .locked,
-            .autoFocus,
-            .continuousAutoFocus
-        ]
-    }
-}
-
 class CameraEngineDevice {
     
     private var backCameraDevice: AVCaptureDevice!
@@ -47,7 +17,7 @@ class CameraEngineDevice {
     var currentDevice: AVCaptureDevice?
     var currentPosition: AVCaptureDevice.Position = .unspecified
     
-    func changeCameraFocusMode(_ focusMode: CameraEngineCameraFocus) {
+    func changeCameraFocusMode(_ focusMode: CameraEngine.Focus) {
         if let currentDevice = self.currentDevice {
             do {
                 try currentDevice.lockForConfiguration()

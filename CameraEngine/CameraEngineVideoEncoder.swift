@@ -10,27 +10,27 @@ import UIKit
 import AVFoundation
 
 public enum CameraEngineVideoEncoderEncoderSettings: String {
-    case Preset640x480
-    case Preset960x540
-    case Preset1280x720
-    case Preset1920x1080
-    case Preset3840x2160
-    case Unknow
+    case preset640x480
+    case preset960x540
+    case preset1280x720
+    case preset1920x1080
+    case preset3840x2160
+    case unknown
     
     private func avFoundationPresetString() -> AVOutputSettingsPreset? {
         switch self {
-        case .Preset640x480: return AVOutputSettingsPreset.preset640x480
-        case .Preset960x540: return AVOutputSettingsPreset.preset960x540
-        case .Preset1280x720: return AVOutputSettingsPreset.preset1280x720
-        case .Preset1920x1080: return AVOutputSettingsPreset.preset1920x1080
-        case .Preset3840x2160:
+        case .preset640x480: return AVOutputSettingsPreset.preset640x480
+        case .preset960x540: return AVOutputSettingsPreset.preset960x540
+        case .preset1280x720: return AVOutputSettingsPreset.preset1280x720
+        case .preset1920x1080: return AVOutputSettingsPreset.preset1920x1080
+        case .preset3840x2160:
             if #available(iOS 9.0, *) {
                 return AVOutputSettingsPreset.preset3840x2160
             }
             else {
                 return nil
             }
-        case .Unknow: return nil
+        case .unknown: return nil
         }
     }
     
@@ -45,21 +45,21 @@ public enum CameraEngineVideoEncoderEncoderSettings: String {
         return AVOutputSettingsAssistant.availableOutputSettingsPresets().map {
             if #available(iOS 9.0, *) {
                 switch $0 {
-                case AVOutputSettingsPreset.preset640x480: return .Preset640x480
-                case AVOutputSettingsPreset.preset960x540: return .Preset960x540
-                case AVOutputSettingsPreset.preset1280x720: return .Preset1280x720
-                case AVOutputSettingsPreset.preset1920x1080: return .Preset1920x1080
-                case AVOutputSettingsPreset.preset3840x2160: return .Preset3840x2160
-                default: return .Unknow
+                case AVOutputSettingsPreset.preset640x480: return .preset640x480
+                case AVOutputSettingsPreset.preset960x540: return .preset960x540
+                case AVOutputSettingsPreset.preset1280x720: return .preset1280x720
+                case AVOutputSettingsPreset.preset1920x1080: return .preset1920x1080
+                case AVOutputSettingsPreset.preset3840x2160: return .preset3840x2160
+                default: return .unknown
                 }
             }
             else {
                 switch $0 {
-                case AVOutputSettingsPreset.preset640x480: return .Preset640x480
-                case AVOutputSettingsPreset.preset960x540: return .Preset960x540
-                case AVOutputSettingsPreset.preset1280x720: return .Preset1280x720
-                case AVOutputSettingsPreset.preset1920x1080: return .Preset1920x1080
-                default: return .Unknow
+                case AVOutputSettingsPreset.preset640x480: return .preset640x480
+                case AVOutputSettingsPreset.preset960x540: return .preset960x540
+                case AVOutputSettingsPreset.preset1280x720: return .preset1280x720
+                case AVOutputSettingsPreset.preset1920x1080: return .preset1920x1080
+                default: return .unknown
                 }
             }
         }
@@ -67,12 +67,12 @@ public enum CameraEngineVideoEncoderEncoderSettings: String {
     
     public func description() -> String {
         switch self {
-        case .Preset640x480: return "Preset 640x480"
-        case .Preset960x540: return "Preset 960x540"
-        case .Preset1280x720: return "Preset 1280x720"
-        case .Preset1920x1080: return "Preset 1920x1080"
-        case .Preset3840x2160: return "Preset 3840x2160"
-        case .Unknow: return "Preset Unknow"
+        case .preset640x480: return "Preset 640x480"
+        case .preset960x540: return "Preset 960x540"
+        case .preset1280x720: return "Preset 1280x720"
+        case .preset1920x1080: return "Preset 1920x1080"
+        case .preset3840x2160: return "Preset 3840x2160"
+        case .unknown: return "Preset Unknown"
         }
     }
 }
@@ -98,7 +98,7 @@ class CameraEngineVideoEncoder {
     private var startTime: CMTime!
     
     lazy var presetSettingEncoder: AVOutputSettingsAssistant? = {
-        return CameraEngineVideoEncoderEncoderSettings.Preset1920x1080.configuration()
+        return CameraEngineVideoEncoderEncoderSettings.preset1920x1080.configuration()
     }()
     
     private func initVideoEncoder(_ url: URL) {
