@@ -43,7 +43,7 @@ class CameraEngineCaptureOutput: NSObject {
     var blockCompletionProgress: blockCompletionProgressRecording?
     
     func capturePhotoBuffer(settings: AVCapturePhotoSettings, _ blockCompletion: @escaping blockCompletionCapturePhotoBuffer) {
-        guard let connectionVideo  = self.stillCameraOutput.connection(withMediaType: AVMediaTypeVideo) else {
+        guard let connectionVideo  = self.stillCameraOutput.connection(with: AVMediaType.video) else {
             blockCompletion(nil, nil)
             return
         }
@@ -52,7 +52,7 @@ class CameraEngineCaptureOutput: NSObject {
     }
     
     func capturePhoto(settings: AVCapturePhotoSettings, _ blockCompletion: @escaping blockCompletionCapturePhoto) {
-        guard let connectionVideo  = self.stillCameraOutput.connection(withMediaType: AVMediaTypeVideo) else {
+        guard let connectionVideo  = self.stillCameraOutput.connection(with: AVMediaType.video) else {
             blockCompletion(nil, nil)
             return
         }
@@ -99,7 +99,39 @@ class CameraEngineCaptureOutput: NSObject {
 }
 
 extension CameraEngineCaptureOutput: AVCapturePhotoCaptureDelegate {
-    public func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
+    @available(iOS 11.0, *)
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        if let error = error {
+            self.blockCompletionPhoto?(nil, error)
+        }
+        else {
+            // source: https://stackoverflow.com/a/46896096/1994889
+            guard let imageData = photo.fileDataRepresentation() else {
+                print("Error while generating image from photo capture data.");
+                self.blockCompletionPhoto?(nil, nil)
+                return
+            }
+            
+            guard let uiImage = UIImage(data: imageData) else {
+                print("Unable to generate UIImage from image data.");
+                self.blockCompletionPhoto?(nil, nil)
+                return
+            }
+            
+            // generate a corresponding CGImage
+            guard let cgImage = uiImage.cgImage else {
+                print("Error generating CGImage");
+                self.blockCompletionPhoto?(nil, nil)
+                return
+            }
+            
+            let deviceOrientationOnCapture = UIDevice.current.orientation
+            let result = UIImage(cgImage: cgImage, scale: 1.0, orientation: deviceOrientationOnCapture.getUIImageOrientationFromDevice())
+            self.blockCompletionPhoto?(result, nil)
+        }
+    }
+    
+    public func photoOutput(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?, previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
         if let error = error {
             self.blockCompletionPhoto?(nil, error)
         }
@@ -142,15 +174,18 @@ extension CameraEngineCaptureOutput: AVCaptureVideoDataOutputSampleBufferDelegat
 
 extension CameraEngineCaptureOutput: AVCaptureFileOutputRecordingDelegate {
     
-    func capture(_ captureOutput: AVCaptureFileOutput!, didStartRecordingToOutputFileAt fileURL: URL!, fromConnections connections: [Any]!) {
+    func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
         print("start recording ...")
     }
     
-    func capture(_ captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAt outputFileURL: URL!, fromConnections connections: [Any]!, error: Error!) {
+    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         print("end recording video ... \(outputFileURL)")
-        print("error : \(error)")
+        if let errorMessage = error?.localizedDescription {
+            print("error : \(errorMessage)")
+        }
         if let blockCompletionVideo = self.blockCompletionVideo {
             blockCompletionVideo(outputFileURL, error as NSError?)
         }
-    }    
+    }
+    
 }
