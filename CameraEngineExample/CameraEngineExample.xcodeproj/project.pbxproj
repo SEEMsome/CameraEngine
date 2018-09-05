@@ -12,8 +12,23 @@
 		BB3B05D81D8C242A00165E2C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB3B05D61D8C242A00165E2C /* Main.storyboard */; };
 		BB3B05DA1D8C242A00165E2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB3B05D91D8C242A00165E2C /* Assets.xcassets */; };
 		BB3B05DD1D8C242A00165E2C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB3B05DB1D8C242A00165E2C /* LaunchScreen.storyboard */; };
-		BB9DFAD61D8C4D95001E7B35 /* CameraEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB9DFAD51D8C4D95001E7B35 /* CameraEngine.framework */; };
+		F0489C4F213E7F6E00268022 /* CameraEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0489C4E213E7F6E00268022 /* CameraEngine.framework */; };
+		F0489C51213E7F9B00268022 /* CameraEngine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0489C4E213E7F6E00268022 /* CameraEngine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F0489C52213E7F9B00268022 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				F0489C51213E7F9B00268022 /* CameraEngine.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		BB3B05CF1D8C242A00165E2C /* CameraEngineExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CameraEngineExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -24,6 +39,7 @@
 		BB3B05DC1D8C242A00165E2C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BB3B05DE1D8C242A00165E2C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB9DFAD51D8C4D95001E7B35 /* CameraEngine.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CameraEngine.framework; path = "../../Library/Developer/Xcode/DerivedData/CameraEngineExample-giwblicspnhgxffyrnhtqbvmjrgc/Build/Products/Debug-iphoneos/CameraEngine.framework"; sourceTree = "<group>"; };
+		F0489C4E213E7F6E00268022 /* CameraEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CameraEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,7 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB9DFAD61D8C4D95001E7B35 /* CameraEngine.framework in Frameworks */,
+				F0489C4F213E7F6E00268022 /* CameraEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +87,7 @@
 		BB9DFAD41D8C4D95001E7B35 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F0489C4E213E7F6E00268022 /* CameraEngine.framework */,
 				BB9DFAD51D8C4D95001E7B35 /* CameraEngine.framework */,
 			);
 			name = Frameworks;
@@ -86,6 +103,7 @@
 				BB3B05CB1D8C242A00165E2C /* Sources */,
 				BB3B05CC1D8C242A00165E2C /* Frameworks */,
 				BB3B05CD1D8C242A00165E2C /* Resources */,
+				F0489C52213E7F9B00268022 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -278,7 +296,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.remirobert.CameraEngineExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -291,7 +309,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.remirobert.CameraEngineExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
