@@ -53,19 +53,19 @@ class ViewController: UIViewController {
         let alertController = UIAlertController(title: "Encoder settings", message: nil, preferredStyle: .actionSheet)
         
         alertController.addAction(UIAlertAction(title: "Preset640x480", style: .default, handler: { _ in
-            self.cameraEngine.videoEncoderPresset = .Preset640x480
+            self.cameraEngine.videoEncoderPresset = .preset640x480
         }))
         alertController.addAction(UIAlertAction(title: "Preset960x540", style: .default, handler: { _ in
-            self.cameraEngine.videoEncoderPresset = .Preset960x540
+            self.cameraEngine.videoEncoderPresset = .preset960x540
         }))
         alertController.addAction(UIAlertAction(title: "Preset1280x720", style: .default, handler: { _ in
-            self.cameraEngine.videoEncoderPresset = .Preset1280x720
+            self.cameraEngine.videoEncoderPresset = .preset1280x720
         }))
         alertController.addAction(UIAlertAction(title: "Preset1920x1080", style: .default, handler: { _ in
-            self.cameraEngine.videoEncoderPresset = .Preset1920x1080
+            self.cameraEngine.videoEncoderPresset = .preset1920x1080
         }))
         alertController.addAction(UIAlertAction(title: "Preset3840x2160", style: .default, handler: { _ in
-            self.cameraEngine.videoEncoderPresset = .Preset3840x2160
+            self.cameraEngine.videoEncoderPresset = .preset3840x2160
         }))
         
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -99,13 +99,13 @@ class ViewController: UIViewController {
         let alertController = UIAlertController(title: "set focus settings", message: nil, preferredStyle: .actionSheet)
         
         alertController.addAction(UIAlertAction(title: "Locked", style: .default, handler: { _ in
-            self.cameraEngine.cameraFocus = CameraEngineCameraFocus.locked
+            self.cameraEngine.cameraFocus = CameraEngine.Focus.locked
         }))
         alertController.addAction(UIAlertAction(title: "auto focus", style: .default, handler: { _ in
-            self.cameraEngine.cameraFocus = CameraEngineCameraFocus.autoFocus
+            self.cameraEngine.cameraFocus = CameraEngine.Focus.autoFocus
         }))
         alertController.addAction(UIAlertAction(title: "continious auto focus", style: .default, handler: { _ in
-            self.cameraEngine.cameraFocus = CameraEngineCameraFocus.continuousAutoFocus
+            self.cameraEngine.cameraFocus = CameraEngine.Focus.continuousAutoFocus
         }))
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         self.present(alertController, animated: true, completion: nil)

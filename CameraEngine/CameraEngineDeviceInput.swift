@@ -19,34 +19,88 @@ class CameraEngineDeviceInput {
     private var cameraDeviceInput: AVCaptureDeviceInput?
     private var micDeviceInput: AVCaptureDeviceInput?
     
-    func configureInputCamera(_ session: AVCaptureSession, device: AVCaptureDevice) throws {
-		session.beginConfiguration()
-        let possibleCameraInput: AnyObject? = try AVCaptureDeviceInput(device: device)
-        if let cameraInput = possibleCameraInput as? AVCaptureDeviceInput {
-            if let currentDeviceInput = self.cameraDeviceInput {
-                session.removeInput(currentDeviceInput)
+    func configureInputCamera(_ session: AVCaptureSession,
+                              device: AVCaptureDevice,
+                              deviceAccessPermissionHandler: CameraEngineDeviceAccessCompletion?) {
+        
+        let onAccessGranted = {
+            session.beginConfiguration()
+            let possibleCameraInput: AnyObject?
+            do {
+                possibleCameraInput = try AVCaptureDeviceInput(device: device)
+            } catch {
+                deviceAccessPermissionHandler?(.camera(.other(error.localizedDescription)), nil)
+                return
             }
-            self.cameraDeviceInput = cameraInput
-            if let cameraInput = self.cameraDeviceInput, session.canAddInput(cameraInput) {
-                session.addInput(cameraInput)
+            
+            if let cameraInput = possibleCameraInput as? AVCaptureDeviceInput {
+                if let currentDeviceInput = self.cameraDeviceInput {
+                    session.removeInput(currentDeviceInput)
+                }
+                self.cameraDeviceInput = cameraInput
+                if let cameraInput = self.cameraDeviceInput, session.canAddInput(cameraInput) {
+                    session.addInput(cameraInput)
+                }
+                else {
+                    deviceAccessPermissionHandler?(.camera(.unableToAdd(.camera)), nil)
+                    return
+                }
             }
-            else {
-                throw CameraEngineDeviceInputErrorType.unableToAddCamera
+            session.commitConfiguration()
+        }
+        
+        let onProcceed: CameraEngineDeviceAccessStateHandler = { action in
+            switch action {
+            case .canPerformFirstTimeDeviceAccess, .canProceedAccessGranted:
+                onAccessGranted()
+            case .settingsChangeRequired, .unexpectedError:
+                print("nothing to do")
+                // TODO: probably remove inputs & kill session.
             }
         }
-		session.commitConfiguration()
+        
+        let accessState = CameraEngine.DeviceAccessState.init(status: CameraEngine.cameraAuthorizationStatus())
+        deviceAccessPermissionHandler?(.camera(accessState), onProcceed)
     }
     
-    func configureInputMic(_ session: AVCaptureSession, device: AVCaptureDevice) throws {
-        if self.micDeviceInput != nil {
-            return
+    func configureInputMic(_ session: AVCaptureSession, device: AVCaptureDevice, deviceAccessPermissionHandler: CameraEngineDeviceAccessCompletion?) {
+        
+        let onAccessGranted = {
+            if self.micDeviceInput != nil {
+                deviceAccessPermissionHandler?(.microphone(.unableToAdd(.microphone)), nil)
+                return
+            }
+            
+            let micDeviceInput: AVCaptureDeviceInput
+            do {
+                micDeviceInput = try AVCaptureDeviceInput(device: device)
+            } catch {
+                deviceAccessPermissionHandler?(.microphone(.other(error.localizedDescription)), nil)
+                return
+            }
+            
+            self.micDeviceInput = micDeviceInput
+            
+            if let micInput = self.micDeviceInput, session.canAddInput(micInput) {
+                session.addInput(micInput)
+            }
+            else {
+                deviceAccessPermissionHandler?(.microphone(.unableToAdd(.microphone)), nil)
+                return
+            }
         }
-        try self.micDeviceInput = AVCaptureDeviceInput(device: device)
-        if let micInput = self.micDeviceInput, session.canAddInput(micInput) {
-            session.addInput(micInput)
+        
+        let onProcceed: CameraEngineDeviceAccessStateHandler = { action in
+            switch action {
+            case .canPerformFirstTimeDeviceAccess, .canProceedAccessGranted:
+                onAccessGranted()
+            case .settingsChangeRequired, .unexpectedError:
+                print("nothing to do")
+                // TODO: probably remove inputs & kill session.
+            }
         }
-        else {
-            throw CameraEngineDeviceInputErrorType.unableToAddMic
-        }
+        
+        let accessState = CameraEngine.DeviceAccessState.init(status: CameraEngine.microphoneAuthorizationStatus())
+        deviceAccessPermissionHandler?(.microphone(accessState), onProcceed)
     }
 }
