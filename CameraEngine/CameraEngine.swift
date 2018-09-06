@@ -370,7 +370,7 @@ public class CameraEngine: NSObject {
     
     public func changeCurrentDevicePosition(_ position: AVCaptureDevice.Position) {
         self.cameraDevice.changeCurrentDevice(position)
-        self.configureInputDevice(deviceAccessPermissionHandler: nil)
+        self.configureInputDevice(deviceAccessPermissionHandler: CameraEngineDeviceInput.defaultDeviceAccessHandler())
     }
     
     public func compatibleCameraFocus() -> [CameraEngine.Focus] {

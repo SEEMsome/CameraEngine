@@ -103,4 +103,30 @@ class CameraEngineDeviceInput {
         let accessState = CameraEngine.DeviceAccessState.init(status: CameraEngine.microphoneAuthorizationStatus())
         deviceAccessPermissionHandler?(.microphone(accessState), onProcceed)
     }
+    
+    static func defaultDeviceAccessHandler() -> CameraEngineDeviceAccessCompletion {
+        let handler: CameraEngineDeviceAccessCompletion = { result, onFinishHandlingDeviceAccessState in
+            switch result {
+            // TODO: refactor this
+            case .camera(.denied),
+                 .camera(.restricted),
+                 .camera(.unableToAdd(.camera)),
+                 .camera(.unableToAdd(.microphone)),
+                 .microphone(.denied),
+                 .microphone(.restricted),
+                 .microphone(.unableToAdd(.microphone)),
+                 .microphone(.unableToAdd(.camera)):
+                onFinishHandlingDeviceAccessState?(.settingsChangeRequired)
+            case .camera(.notDetermined), .microphone(.notDetermined):
+                onFinishHandlingDeviceAccessState?(.canPerformFirstTimeDeviceAccess)
+            case .camera(.authorized), .microphone(.authorized):
+                onFinishHandlingDeviceAccessState?(.canProceedAccessGranted)
+            case let .camera(.other(errorMessage)):
+                onFinishHandlingDeviceAccessState?(.unexpectedError(errorMessage))
+            case let .microphone(.other(errorMessage)):
+                onFinishHandlingDeviceAccessState?(.unexpectedError(errorMessage))
+            }
+        }
+        return handler
+    }
 }
