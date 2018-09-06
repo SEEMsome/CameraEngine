@@ -446,6 +446,11 @@ public class CameraEngine: NSObject {
     //MARK: Device I/O configuration
     
     private func configureInputDevice(deviceAccessPermissionHandler: CameraEngineDeviceAccessCompletion?) {
+        if Platform.isSimulator {
+            deviceAccessPermissionHandler?(.camera(.runningOnSimulator), nil)
+            return
+        }
+        
         if let currentDevice = self.cameraDevice.currentDevice, devicePermissionRequests.contains(.camera) {
             self.cameraInput.configureInputCamera(self.session, device: currentDevice, deviceAccessPermissionHandler: deviceAccessPermissionHandler)
         }
@@ -543,4 +548,13 @@ extension AVCaptureDevice.Position {
         case .front, .unspecified: return .back
         }
     }
+}
+
+struct Platform {
+    static let isSimulator: Bool = {
+        #if arch(i386) || arch(x86_64)
+        return true
+        #endif
+        return false
+    }()
 }

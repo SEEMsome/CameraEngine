@@ -53,7 +53,7 @@ class CameraEngineDeviceInput {
             switch action {
             case .canPerformFirstTimeDeviceAccess, .canProceedAccessGranted:
                 onAccessGranted()
-            case .settingsChangeRequired, .unexpectedError:
+            case .settingsChangeRequired, .unexpectedError, .runningOnSimulator:
                 print("nothing to do")
                 // TODO: probably remove inputs & kill session.
             }
@@ -94,7 +94,7 @@ class CameraEngineDeviceInput {
             switch action {
             case .canPerformFirstTimeDeviceAccess, .canProceedAccessGranted:
                 onAccessGranted()
-            case .settingsChangeRequired, .unexpectedError:
+            case .settingsChangeRequired, .unexpectedError, .runningOnSimulator:
                 print("nothing to do")
                 // TODO: probably remove inputs & kill session.
             }
@@ -125,6 +125,9 @@ class CameraEngineDeviceInput {
                 onFinishHandlingDeviceAccessState?(.unexpectedError(errorMessage))
             case let .microphone(.other(errorMessage)):
                 onFinishHandlingDeviceAccessState?(.unexpectedError(errorMessage))
+            case .camera(.runningOnSimulator),
+                 .microphone(.runningOnSimulator):
+                onFinishHandlingDeviceAccessState?(.runningOnSimulator)
             }
         }
         return handler
