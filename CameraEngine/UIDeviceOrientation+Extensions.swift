@@ -11,15 +11,15 @@ import UIKit
 extension UIDeviceOrientation {
     
     // source: https://stackoverflow.com/a/46896096/1994889
-    func getUIImageOrientationFromDevice() -> UIImageOrientation {
+    func getUIImageOrientationFromDevice() -> UIImage.Orientation {
         // return CGImagePropertyOrientation based on Device Orientation
         // This extented function has been determined based on experimentation with how an UIImage gets displayed.
         switch self {
-        case UIDeviceOrientation.portrait, .faceUp: return UIImageOrientation.right
-        case UIDeviceOrientation.portraitUpsideDown, .faceDown: return UIImageOrientation.left
-        case UIDeviceOrientation.landscapeLeft: return UIImageOrientation.up // this is the base orientation
-        case UIDeviceOrientation.landscapeRight: return UIImageOrientation.down
-        case UIDeviceOrientation.unknown: return UIImageOrientation.up
+        case UIDeviceOrientation.portrait, .faceUp: return UIImage.Orientation.right
+        case UIDeviceOrientation.portraitUpsideDown, .faceDown: return UIImage.Orientation.left
+        case UIDeviceOrientation.landscapeLeft: return UIImage.Orientation.up // this is the base orientation
+        case UIDeviceOrientation.landscapeRight: return UIImage.Orientation.down
+        case UIDeviceOrientation.unknown: return UIImage.Orientation.up
         }
     }
     

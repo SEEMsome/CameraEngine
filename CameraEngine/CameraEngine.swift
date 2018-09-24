@@ -356,7 +356,7 @@ public class CameraEngine: NSObject {
 			if (!UIDevice.current.isGeneratingDeviceOrientationNotifications) {
 				UIDevice.current.beginGeneratingDeviceOrientationNotifications()
 			}
-            NotificationCenter.default.addObserver(forName: NSNotification.Name.UIDeviceOrientationDidChange, object: nil, queue: OperationQueue.main) { (_) -> Void in
+            NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification, object: nil, queue: OperationQueue.main) { (_) -> Void in
                 self.previewLayer.connection?.videoOrientation = AVCaptureVideoOrientation.orientationFromUIDeviceOrientation(UIDevice.current.orientation)
             }
         }
@@ -364,7 +364,7 @@ public class CameraEngine: NSObject {
 			if (UIDevice.current.isGeneratingDeviceOrientationNotifications) {
 				UIDevice.current.endGeneratingDeviceOrientationNotifications()
 			}
-            NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+            NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
         }
     }
     

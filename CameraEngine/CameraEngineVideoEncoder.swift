@@ -163,7 +163,7 @@ class CameraEngineVideoEncoder {
         }
         self.firstFrame = true
         if CMSampleBufferDataIsReady(sampleBuffer) {
-            if self.assetWriter.status == AVAssetWriterStatus.unknown {
+            if self.assetWriter.status == AVAssetWriter.Status.unknown {
                 let startTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
                 self.assetWriter.startWriting()
                 self.assetWriter.startSession(atSourceTime: startTime)
