@@ -13,7 +13,7 @@ extension CameraEngine {
     
     public enum DevicePermissionRequest {
         case camera, microphone
-        static let `default`: [DevicePermissionRequest] = [.camera, .microphone]
+        static let `default`: [DevicePermissionRequest] = [.camera]
     }
     
     public enum DeviceAccessState {
