@@ -16,6 +16,8 @@
 		BBE9B7CF1D8C41ED009F2670 /* CameraEngineGifEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE9B7C71D8C41ED009F2670 /* CameraEngineGifEncoder.swift */; };
 		BBE9B7D01D8C41ED009F2670 /* CameraEngineMetadataOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE9B7C81D8C41ED009F2670 /* CameraEngineMetadataOutput.swift */; };
 		BBE9B7D11D8C41ED009F2670 /* CameraEngineVideoEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE9B7C91D8C41ED009F2670 /* CameraEngineVideoEncoder.swift */; };
+		F0489C54213E856C00268022 /* UIDeviceOrientation+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0489C53213E856C00268022 /* UIDeviceOrientation+Extensions.swift */; };
+		F0489C56213E893900268022 /* CameraEngine+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0489C55213E893900268022 /* CameraEngine+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		BBE9B7C71D8C41ED009F2670 /* CameraEngineGifEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraEngineGifEncoder.swift; sourceTree = "<group>"; };
 		BBE9B7C81D8C41ED009F2670 /* CameraEngineMetadataOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraEngineMetadataOutput.swift; sourceTree = "<group>"; };
 		BBE9B7C91D8C41ED009F2670 /* CameraEngineVideoEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraEngineVideoEncoder.swift; sourceTree = "<group>"; };
+		F0489C53213E856C00268022 /* UIDeviceOrientation+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDeviceOrientation+Extensions.swift"; sourceTree = "<group>"; };
+		F0489C55213E893900268022 /* CameraEngine+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraEngine+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +75,8 @@
 				BBE9B7C71D8C41ED009F2670 /* CameraEngineGifEncoder.swift */,
 				BBE9B7C81D8C41ED009F2670 /* CameraEngineMetadataOutput.swift */,
 				BBE9B7C91D8C41ED009F2670 /* CameraEngineVideoEncoder.swift */,
+				F0489C55213E893900268022 /* CameraEngine+Extensions.swift */,
+				F0489C53213E856C00268022 /* UIDeviceOrientation+Extensions.swift */,
 				BBE9B7BB1D8C41D1009F2670 /* Info.plist */,
 			);
 			path = CameraEngine;
@@ -161,8 +167,10 @@
 				BBE9B7CB1D8C41ED009F2670 /* CameraEngineCaptureOutput.swift in Sources */,
 				BBE9B7CA1D8C41ED009F2670 /* CameraEngine.swift in Sources */,
 				BBE9B7CE1D8C41ED009F2670 /* CameraEngineFileManager.swift in Sources */,
+				F0489C54213E856C00268022 /* UIDeviceOrientation+Extensions.swift in Sources */,
 				BBE9B7CF1D8C41ED009F2670 /* CameraEngineGifEncoder.swift in Sources */,
 				BBE9B7CD1D8C41ED009F2670 /* CameraEngineDeviceInput.swift in Sources */,
+				F0489C56213E893900268022 /* CameraEngine+Extensions.swift in Sources */,
 				BBE9B7D11D8C41ED009F2670 /* CameraEngineVideoEncoder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -286,7 +294,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -306,7 +314,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.remirobert.CameraEngine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
