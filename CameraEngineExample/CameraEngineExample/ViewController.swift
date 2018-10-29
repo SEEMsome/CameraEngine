@@ -16,7 +16,7 @@ enum ModeCapture {
 
 class ViewController: UIViewController {
     
-    private var cameraEngine = CameraEngine()
+    private var cameraEngine = CameraEngine.shared
     private var mode: ModeCapture = .Photo
     
     @IBOutlet weak var buttonMode: UIButton!

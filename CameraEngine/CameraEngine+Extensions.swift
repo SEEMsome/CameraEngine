@@ -26,6 +26,7 @@ extension CameraEngine {
         case restricted // probably restricted at parental control
         case notDetermined // choice by the user wasn't made
         case unableToAdd(UnableToAdd)
+        case runningOnSimulator
         case other(String)
         
         init(status: AVAuthorizationStatus) {
@@ -43,6 +44,7 @@ extension CameraEngine {
         case canPerformFirstTimeDeviceAccess // access not determined, can present in-app device access description (optional) before requesting on system level
         case canProceedAccessGranted // access granted, can proceed safely
         case unexpectedError(String)
+        case runningOnSimulator
     }
 
     public enum Focus {

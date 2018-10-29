@@ -356,7 +356,7 @@ public class CameraEngine: NSObject {
 			if (!UIDevice.current.isGeneratingDeviceOrientationNotifications) {
 				UIDevice.current.beginGeneratingDeviceOrientationNotifications()
 			}
-            NotificationCenter.default.addObserver(forName: NSNotification.Name.UIDeviceOrientationDidChange, object: nil, queue: OperationQueue.main) { (_) -> Void in
+            NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification, object: nil, queue: OperationQueue.main) { (_) -> Void in
                 self.previewLayer.connection?.videoOrientation = AVCaptureVideoOrientation.orientationFromUIDeviceOrientation(UIDevice.current.orientation)
             }
         }
@@ -364,13 +364,13 @@ public class CameraEngine: NSObject {
 			if (UIDevice.current.isGeneratingDeviceOrientationNotifications) {
 				UIDevice.current.endGeneratingDeviceOrientationNotifications()
 			}
-            NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+            NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
         }
     }
     
     public func changeCurrentDevicePosition(_ position: AVCaptureDevice.Position) {
         self.cameraDevice.changeCurrentDevice(position)
-        self.configureInputDevice(deviceAccessPermissionHandler: nil)
+        self.configureInputDevice(deviceAccessPermissionHandler: CameraEngineDeviceInput.defaultDeviceAccessHandler())
     }
     
     public func compatibleCameraFocus() -> [CameraEngine.Focus] {
@@ -446,6 +446,11 @@ public class CameraEngine: NSObject {
     //MARK: Device I/O configuration
     
     private func configureInputDevice(deviceAccessPermissionHandler: CameraEngineDeviceAccessCompletion?) {
+        if Platform.isSimulator {
+            deviceAccessPermissionHandler?(.camera(.runningOnSimulator), nil)
+            return
+        }
+        
         if let currentDevice = self.cameraDevice.currentDevice, devicePermissionRequests.contains(.camera) {
             self.cameraInput.configureInputCamera(self.session, device: currentDevice, deviceAccessPermissionHandler: deviceAccessPermissionHandler)
         }
@@ -506,7 +511,8 @@ public extension CameraEngine {
 public extension CameraEngine {
     
     public func capturePhoto(_ blockCompletion: @escaping blockCompletionCapturePhoto) {
-        self.cameraOutput.capturePhoto(settings: self.capturePhotoSettings, blockCompletion)
+        let uniqueSettings = AVCapturePhotoSettings.init(from: self.capturePhotoSettings)
+        self.cameraOutput.capturePhoto(settings: uniqueSettings, blockCompletion)
     }
 	
 	public func capturePhotoBuffer(_ blockCompletion: @escaping blockCompletionCapturePhotoBuffer) {
@@ -542,4 +548,13 @@ extension AVCaptureDevice.Position {
         case .front, .unspecified: return .back
         }
     }
+}
+
+struct Platform {
+    static let isSimulator: Bool = {
+        #if arch(i386) || arch(x86_64)
+        return true
+        #endif
+        return false
+    }()
 }
