@@ -9,6 +9,14 @@
 import UIKit
 import AVFoundation
 
+public enum CameraEngineDeviceAccessResult {
+    case camera(CameraEngine.DeviceAccessState)
+    case microphone(CameraEngine.DeviceAccessState)
+}
+
+public typealias CameraEngineDeviceAccessStateHandler = ((CameraEngine.DeviceAccessAction) -> Void)
+public typealias CameraEngineDeviceAccessCompletion = ((CameraEngineDeviceAccessResult, CameraEngineDeviceAccessStateHandler?) -> Void)
+
 public enum CameraEngineSessionPreset {
     case photo
     case high
@@ -76,6 +84,7 @@ public class CameraEngine: NSObject {
     let cameraGifEncoder = CameraEngineGifEncoder()
     let capturePhotoSettings = AVCapturePhotoSettings()
     var captureDeviceIntput: AVCaptureDeviceInput?
+    private(set) var devicePermissionRequests: [DevicePermissionRequest] = DevicePermissionRequest.default
     
     var sessionQueue: DispatchQueue = DispatchQueue(label: cameraEngineSessionQueueIdentifier)
     
@@ -250,11 +259,55 @@ public class CameraEngine: NSObject {
         }
     }
     
-    public static var sharedInstance: CameraEngine = CameraEngine()
-    
-    public override init() {
+    public static let shared = CameraEngine()
+    private override init() {
         super.init()
-        self.setupSession()
+    }
+    
+    /*
+    public func testStart() {
+        startSession(devicePermissionRequests: [.camera, .microphone], deviceAccessPermissionHandler: { result, onFinishHandlingDeviceAccessState in
+            switch result {
+            case .camera(.denied),
+                 .camera(.restricted),
+                 .camera(.unableToAdd(.camera)),
+                 .camera(.unableToAdd(.microphone)),
+                 .microphone(.denied),
+                 .microphone(.restricted),
+                 .microphone(.unableToAdd(.microphone)),
+                 .microphone(.unableToAdd(.camera)):
+                // TODO:
+                //
+                // fix redundant cases like:
+                // .camera(.unableToAdd(.microphone)),
+                // .microphone(.unableToAdd(.camera)):
+                //
+                // print("sad :(")
+                // present in-app alert, settings change required here
+                //
+                onFinishHandlingDeviceAccessState?(.settingsChangeRequired)
+            case .camera(.notDetermined), .microphone(.notDetermined):
+                //
+                //print("ok, preparing ui for the first permission request")
+                //
+                // notify caller to show in-app ui for upcoming system permission, then continue on notify completion
+                onFinishHandlingDeviceAccessState?(.canPerformFirstTimeDeviceAccess)
+            case .camera(.authorized), .microphone(.authorized):
+                onFinishHandlingDeviceAccessState?(.canProceedAccessGranted)
+            case let .camera(.other(errorMessage)):
+                onFinishHandlingDeviceAccessState?(.unexpectedError(errorMessage))
+            case let .microphone(.other(errorMessage)):
+                onFinishHandlingDeviceAccessState?(.unexpectedError(errorMessage))
+            }
+        })
+    }
+    */
+    
+    public func startSession(devicePermissionRequests: [DevicePermissionRequest],
+                             deviceAccessPermissionHandler: @escaping CameraEngineDeviceAccessCompletion) {
+        self.devicePermissionRequests = devicePermissionRequests
+        setupSession(deviceAccessPermissionHandler: deviceAccessPermissionHandler)
+        startSession()
     }
     
     deinit {
@@ -262,16 +315,20 @@ public class CameraEngine: NSObject {
         NotificationCenter.default.removeObserver(self)
     }
     
-    private func setupSession() {
+    private func setupSession(deviceAccessPermissionHandler: @escaping CameraEngineDeviceAccessCompletion) {
         self.sessionQueue.async { () -> Void in
-            self.configureInputDevice()
+            self.configureInputDevice(deviceAccessPermissionHandler: deviceAccessPermissionHandler)
             self.configureOutputDevice()
             self.handleDeviceOrientation()
         }
     }
     
-    public class func askAuthorization() -> AVAuthorizationStatus {
+    public class func cameraAuthorizationStatus() -> AVAuthorizationStatus {
         return AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
+    }
+    
+    public class func microphoneAuthorizationStatus() -> AVAuthorizationStatus {
+        return AVCaptureDevice.authorizationStatus(for: AVMediaType.audio)
     }
     
     //MARK: Session management
@@ -311,9 +368,9 @@ public class CameraEngine: NSObject {
         }
     }
     
-    public func changeCurrentDevice(_ position: AVCaptureDevice.Position) {
+    public func changeCurrentDevicePosition(_ position: AVCaptureDevice.Position) {
         self.cameraDevice.changeCurrentDevice(position)
-        self.configureInputDevice()
+        self.configureInputDevice(deviceAccessPermissionHandler: nil)
     }
     
     public func compatibleCameraFocus() -> [CameraEngine.Focus] {
@@ -372,38 +429,28 @@ public class CameraEngine: NSObject {
     
     public func switchCurrentDevice() {
         if self.isRecording == false {
-            self.changeCurrentDevice((self.cameraDevice.currentPosition == .back) ? .front : .back)
+            let position = self.cameraDevice.currentPosition.toggle()
+            self.changeCurrentDevicePosition(position)
         }
     }
     
-    public var currentDevice: AVCaptureDevice.Position {
+    public var currentDevicePosition: AVCaptureDevice.Position {
         get {
             return self.cameraDevice.currentPosition
         }
         set {
-            self.changeCurrentDevice(newValue)
+            self.changeCurrentDevicePosition(newValue)
         }
     }
     
     //MARK: Device I/O configuration
     
-    private func configureInputDevice() {
-        do {
-            if let currentDevice = self.cameraDevice.currentDevice {
-                try self.cameraInput.configureInputCamera(self.session, device: currentDevice)
-            }
-            if let micDevice = self.cameraDevice.micCameraDevice {
-                try self.cameraInput.configureInputMic(self.session, device: micDevice)
-            }
+    private func configureInputDevice(deviceAccessPermissionHandler: CameraEngineDeviceAccessCompletion?) {
+        if let currentDevice = self.cameraDevice.currentDevice, devicePermissionRequests.contains(.camera) {
+            self.cameraInput.configureInputCamera(self.session, device: currentDevice, deviceAccessPermissionHandler: deviceAccessPermissionHandler)
         }
-        catch CameraEngineDeviceInputErrorType.unableToAddCamera {
-            fatalError("[CameraEngine] unable to add camera as InputDevice")
-        }
-        catch CameraEngineDeviceInputErrorType.unableToAddMic {
-            fatalError("[CameraEngine] unable to add mic as InputDevice")
-        }
-        catch {
-            fatalError("[CameraEngine] error initInputDevice")
+        if let micDevice = self.cameraDevice.micCameraDevice, devicePermissionRequests.contains(.microphone) {
+            self.cameraInput.configureInputMic(self.session, device: micDevice, deviceAccessPermissionHandler: deviceAccessPermissionHandler)
         }
     }
     
@@ -485,5 +532,14 @@ public extension CameraEngine {
     public func createGif(_ fileUrl: URL, frames: [UIImage], delayTime: Float, loopCount: Int = 0, completionGif: @escaping blockCompletionGifEncoder) {
         self.cameraGifEncoder.blockCompletionGif = completionGif
         self.cameraGifEncoder.createGif(fileUrl, frames: frames, delayTime: delayTime, loopCount: loopCount)
+    }
+}
+
+extension AVCaptureDevice.Position {
+    public func toggle() -> AVCaptureDevice.Position {
+        switch self {
+        case .back: return .front
+        case .front, .unspecified: return .back
+        }
     }
 }
