@@ -23,7 +23,6 @@
 /* Begin PBXFileReference section */
 		BBE9B7B71D8C41D1009F2670 /* CameraEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CameraEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE9B7BA1D8C41D1009F2670 /* CameraEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraEngine.h; sourceTree = "<group>"; };
-		BBE9B7BB1D8C41D1009F2670 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BBE9B7C21D8C41ED009F2670 /* CameraEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraEngine.swift; sourceTree = "<group>"; };
 		BBE9B7C31D8C41ED009F2670 /* CameraEngineCaptureOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraEngineCaptureOutput.swift; sourceTree = "<group>"; };
 		BBE9B7C41D8C41ED009F2670 /* CameraEngineDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraEngineDevice.swift; sourceTree = "<group>"; };
@@ -77,7 +76,6 @@
 				BBE9B7C91D8C41ED009F2670 /* CameraEngineVideoEncoder.swift */,
 				F0489C55213E893900268022 /* CameraEngine+Extensions.swift */,
 				F0489C53213E856C00268022 /* UIDeviceOrientation+Extensions.swift */,
-				BBE9B7BB1D8C41D1009F2670 /* Info.plist */,
 			);
 			path = CameraEngine;
 			sourceTree = "<group>";
@@ -135,6 +133,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = BBE9B7AD1D8C41D1009F2670;
